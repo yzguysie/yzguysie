@@ -1,0 +1,489 @@
+"""
+Pong
+
+Description:
+"""
+# Setup
+import pygame
+pygame.init()
+import random
+
+
+
+class paddle:
+    def __init__(self, x, y, width, length, color):
+        self.x = x
+        self.y = y
+        self.width = width
+        self.length = length
+        self.color = color
+    def check_colliding(self, ball_x, ball_y, ball_speed):
+        pass
+    def draw(self):
+        pygame.draw.line(win,(self.color),((self.x),self.y-self.length/2),((self.x),self.y+self.length/2),self.width)
+    def check_colliding(self, ball_x, ball_y, ball_speed):
+        colliding_x, colliding_y = False, False
+        x_dist = abs(ball_x - self.x)
+        # check if we collided along x-axis
+        if x_dist  < self.width/2 + ball_width:
+            colliding_x = True
+        y_dist = abs(ball_y - self.y)
+        if y_dist < self.length/2:
+            colliding_y = True
+        if colliding_x and colliding_y:
+            return True
+        return False
+
+def check_colliding(ball_x, ball_y, ball_speed, paddle):
+    colliding_x, colliding_y = False, False
+    x_dist = abs(ball_x - paddle.x)
+    # check if we collided along x-axis
+    if x_dist  < paddle.width/2 + ball_width:
+        colliding_x = True
+    y_dist = abs(ball_y - paddle.y)
+    if y_dist < paddle.length/2:
+        colliding_y = True
+##    if (ball_x - paddle.x) - (-paddle.width/2) >= -ball_width and paddle.x - ball_x <= ball_speed-ball_width:
+##        colliding_x = True
+##    if ball_y - (paddle.y-((paddle.length) /2)) >= -ball_width and ball_y - (paddle.y+((paddle.length) /2)) <= ball_width:
+##        colliding_y = True
+    if colliding_x and colliding_y:
+        return True
+    return False
+
+def color_get(color_list, color_type, multiplier):
+    new_color_list = []
+    if type(color_list) is list:
+        if color_type == 0:
+            for color in color_list:
+                if color <= 255-multiplier:
+                    color += multiplier
+                else:
+                    color == 255
+                new_color_list.append(color)
+                
+        if color_type == 1:
+            for color in color_list:
+                if color >= multiplier:
+                    color -= multiplier
+                else:
+                    color == 0
+                new_color_list.append(color)
+                
+        if color_type == 2:
+            return "Not working right now"
+            
+        return new_color_list
+
+    
+    else:
+        
+        color = color_list
+        if color_type == 0:
+            if color <= 255-multiplier:
+                color += multiplier
+            else:
+                color == 255
+            new_color_list.append(color)
+            
+        if color_type == 1:
+            if color >= multiplier:
+                color -= multiplier
+            else:
+                color = 0
+        if color_type == 2:
+            return "Not working right now"
+        return color
+width, height = 1080, 720 # 19
+speed = 1
+fps = 75
+paddle_left = paddle(width/25, height/2, int(width/100), height/5, (255, 255, 255))
+paddle_right = paddle(width-width/25, height/2, int(width/100), height/5, (255, 255, 255))
+pad_1_length = height/5
+pad_2_length = height/5
+white = (255,255,255)
+ball_width = int(width/100)
+ball_speed = ((width/100))*speed
+font_width = int(width/10)
+font = "arial"
+
+white = (255, 255, 255)
+pad_color1, pad_color2 = (255, 255, 255), (255, 255, 255)
+
+pad_color1fl, pad_color2fl  = 255, 255
+
+dialogue_font = pygame.font.SysFont(font, font_width)
+pad_color_1_num = 255
+pad_color_2_num = 255
+ball_color = (255,255,255)
+won = 0
+paused = False
+y1 = 0
+y2 = 0
+ball_x = width/2
+ball_y = height/2
+points1 = 0
+points2 = 0
+wins1 = 0
+wins2 = 0
+
+
+rising = 0
+falling = 1
+flashing = 2
+
+ball_directionx = ball_speed
+clock = pygame.time.Clock()
+
+if (height/250) % 1 == 0:
+    ball_directiony = random.randint(height/250,height/250)
+else:
+    ball_directiony = random.randint(height,height)
+    ball_directiony /= 250
+
+pygame.mouse.set_visible(True)
+win = pygame.display.set_mode([width, height])
+pygame.display.set_caption('Pong')
+win.fill([0,0,0])
+
+flashing_text_color = (255,255,255)
+flashing_text_change = 3
+flashing_text_rise = flashing_text_change*-1
+pad_color_timer1 = 255
+pad_color_timer2 = 255
+playing = False
+did_quit = False
+while not playing:
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            playing = True
+            did_quit = True
+            break
+        if event.type == pygame.MOUSEBUTTONDOWN:
+            playing = True
+        elif event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_ESCAPE:
+                playing = True
+                did_quit = True
+                break
+        
+    win.fill([0,0,0])
+    flashing_text_color = flashing_text_color[0]
+    if flashing_text_color > 255-flashing_text_change:
+        flashing_text_color = 255
+        flashing_text_rise = flashing_text_change*-1
+    elif flashing_text_color < flashing_text_change:
+        flashing_text_color = 0
+        flashing_text_rise = flashing_text_change
+    flashing_text_color += flashing_text_rise
+    flashing_text_color = (flashing_text_color, flashing_text_color, flashing_text_color)
+    dialogue_font = pygame.font.SysFont(font, font_width)
+    dialogue = dialogue_font.render("PLAY", True, flashing_text_color)
+    dialogue_rect = dialogue.get_rect(center=(width/2, height/2))
+    win.blit(dialogue, dialogue_rect)
+
+    pygame.display.flip()
+    clock.tick(fps)
+playing = True
+if did_quit:
+    playing = False
+pygame.mouse.set_visible(False)
+while playing:
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            playing = False
+            break
+        elif event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_ESCAPE:
+                playing = False
+                break
+            if event.key == pygame.K_SPACE:
+                paused = not paused
+            if event.key == pygame.K_RETURN:
+                fps = 75
+                paddle_left = paddle(width/25, height/2, int(width/100), height/5, (255, 255, 255))
+                paddle_right = paddle(width-width/25, height/2, int(width/100), height/5, (255, 255, 255))
+                pad_1_length = height/5
+                pad_2_length = height/5
+                white = (255,255,255)
+                ball_width = int(width/100)
+                ball_speed = ((width/100))*speed
+                font_width = int(width/10)
+                font = "arial"
+
+                white = (255, 255, 255)
+                pad_color1, pad_color2 = (255, 255, 255), (255, 255, 255)
+
+                pad_color1fl, pad_color2fl  = 255, 255
+
+                dialogue_font = pygame.font.SysFont(font, font_width)
+                pad_color_1_num = 255
+                pad_color_2_num = 255
+                ball_color = (255,255,255)
+                won = 0
+                paused = False
+                y1 = 0
+                y2 = 0
+                ball_x = width/2
+                ball_y = height/2
+                points1 = 0
+                points2 = 0
+                wins1 = 0
+                wins2 = 0
+
+
+                rising = 0
+                falling = 1
+                flashing = 2
+
+                ball_directionx = ball_speed
+                clock = pygame.time.Clock()
+
+                if (height/250) % 1 == 0:
+                    ball_directiony = random.randint(height/250,height/250)
+                else:
+                    ball_directiony = random.randint(height,height)
+                    ball_directiony /= 250
+
+                pygame.mouse.set_visible(False)
+                win = pygame.display.set_mode([width, height])
+                pygame.display.set_caption('Pong')
+                win.fill([0,0,0])
+
+                flashing_text_color = (255,255,255)
+                flashing_text_change = 3
+                flashing_text_rise = flashing_text_change*-1
+                pad_color_timer1 = 255
+                pad_color_timer2 = 255
+
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_DOWN:
+                    speed /= 2
+                if event.key == pygame.K_UP:
+                    speed *= 2
+    win.fill([0,0,0])
+    flashing_text_color = flashing_text_color[0]
+    if flashing_text_color > 255-flashing_text_change:
+        flashing_text_color = 255
+        flashing_text_rise = flashing_text_change*-1
+    elif flashing_text_color < flashing_text_change:
+        flashing_text_color = 0
+        flashing_text_rise = flashing_text_change
+    flashing_text_color += flashing_text_rise
+    flashing_text_color = (flashing_text_color, flashing_text_color, flashing_text_color)
+    if not paused:
+        fuckkkkksdfopiadpfiawhf, paddle_right.y = pygame.mouse.get_pos()
+        paddle_left.y += int((ball_y-paddle_left.y)/24)
+        #y2 += int((ball_y-y2)/12)
+    touchingy1 = False
+    touchingx1 = False
+    touchingy2 = False
+    touchingx2 = False
+    touching1 = False
+    touching2 = False
+    
+    # If the ball is on the edge of the screen, bounce
+    if ball_y >= height-ball_width:
+        ball_directiony = abs(ball_directiony)*-1
+    if ball_y <= ball_width:
+        ball_directiony = abs(ball_directiony)
+    if ball_x >= width-ball_width:
+        # Right side of screen
+        ball_directionx *= -1
+        paddle_right.length /= 1.2
+    if ball_x <= ball_width:
+        # Left side of screen
+        ball_directionx *= -1
+        paddle_left.length /= 1.2
+    # If the pads are higher than the top or lower then the bottom of the screen, fix it
+    if paddle_right.y > height-paddle_right.length/2:
+        paddle_right.y  = height-paddle_right.length/2
+    if paddle_right.y  < paddle_right.length/2:
+        paddle_right.y  = paddle_right.length/2
+    if paddle_left.y > height-paddle_left.length/2:
+        paddle_left.y = height-paddle_left.length/2
+    if paddle_left.y < paddle_left.length/2:
+        paddle_left.y = paddle_left.length/2
+    
+    
+    # Collision check
+    if paddle_left.check_colliding(ball_x, ball_y, ball_speed):
+        if ball_directionx < 0:
+            touching1 = True
+        # Ball is touching the left pad
+        
+    if paddle_right.check_colliding(ball_x, ball_y, ball_speed):
+        if ball_directionx > 0:
+            touching2 = True
+            ydist = ball_y - paddle_right.y
+        # Ball is touching the right pad
+        
+    if touching1:
+        ball_directionx = ball_speed
+        ball_directiony = (ydist/(pad_1_length/2))*20
+        pad_color_1_num -= 200
+        points1 += 1
+        print(f"Debug info: Left paddle, ballspeed y {ball_directiony}, ydist {ydist}, paddle size {pad_1_length}")
+        
+    if touching2:
+        ball_directionx = -ball_speed
+        ball_directiony = (ydist/(pad_2_length/2))*20
+        pad_color_2_num -= 200
+        points2 += 1
+        print(f"Debug info: Right paddle, ballspeed y {ball_directiony}, ydist {ydist}, paddle size {pad_2_length}")
+    
+        
+    # Pad colors
+    if not paused:
+        pad_color_1_num, pad_color_2_num = color_get([pad_color_1_num, pad_color_2_num], rising, 2)
+        paddle_left.color = (pad_color_1_num, 0, 0)
+        paddle_right.color = (0, 0, pad_color_2_num)
+    # Font
+    if (points1 - points2 >= 5 or pad_2_length/2 <= ball_width or won == 1) and won != 2:
+        if won != 1:
+            wins1 += 1
+            won = 1
+        dialogue_font = pygame.font.SysFont(font, int(font_width/2))
+        dialogue = dialogue_font.render(str(wins1)+" - "+str(wins2), True, (255,255,255))
+        win.blit(dialogue, (int((width/2-width/20)), int(height/4)))
+        dialogue_font = pygame.font.SysFont(font, font_width)
+        dialogue = dialogue_font.render("Winner", True, paddle_left.color)
+        win.blit(dialogue, (int((width/2)-width/3), int(height/4)))
+        dialogue = dialogue_font.render("Loser", True, paddle_right.color)
+        win.blit(dialogue, (int((width/2+width/3)), int(height/4)))
+        dialogue = dialogue_font.render("PRESS ENTER", True, flashing_text_color)
+        win.blit(dialogue, (int(width/6.5), int(height/1.5)))
+        
+    elif (points2 - points1 >= 5 or pad_1_length/2 <= ball_width or won == 2) and won != 1:
+        if won != 2:
+            wins2 += 1
+            won = 2
+        dialogue_font = pygame.font.SysFont(font, int(font_width/2))
+        dialogue = dialogue_font.render(str(wins1)+" - "+str(wins2), True, (255,255,255))
+        win.blit(dialogue, (int((width/2-width/20)), int(height/4)))
+        dialogue_font = pygame.font.SysFont(font, font_width)
+        dialogue = dialogue_font.render("Loser", True, paddle_left.color)
+        win.blit(dialogue, (int((width/2)-width/3), int(height/4)))
+        dialogue = dialogue_font.render("Winner", True, paddle_right.color)
+        win.blit(dialogue, (int((width/2)+width/30), int(height/4)))
+        dialogue = dialogue_font.render("PRESS ENTER", True, flashing_text_color)
+        win.blit(dialogue, (int(width/6.5), int(height/1.5)))
+    else:
+        dialogue_font = pygame.font.SysFont(font, int(font_width/2))
+        dialogue = dialogue_font.render(str(wins1)+" - "+str(wins2), True, (255,255,255))
+        win.blit(dialogue, (int((width/2-width/20)), int(height/4)))
+        dialogue_font = pygame.font.SysFont(font, font_width)
+        dialogue = dialogue_font.render(str(points1), True, paddle_left.color)
+        win.blit(dialogue, (int((width/2)-width/5), int(height/3)))
+        dialogue = dialogue_font.render(str(points2), True, paddle_right.color)
+        win.blit(dialogue, (int((width/2)+width/8), int(height/3)))
+    if paused:
+        dialogue = dialogue_font.render("PAUSED", True, flashing_text_color)
+        win.blit(dialogue, (int(width/3.35), int(height/24)))
+
+    
+
+    # Find center pygame.draw.circle(win,(ball_color), (width/2, height/2), 5)
+    
+    """
+    # Old font system
+    if points > 15:
+        points = 0
+    if points == 0:
+        pygame.draw.polygon(win,(255,255,255), [(225,50), (225,150), (275,150), (275,50)], font_width)
+    elif points == 1:
+        pygame.draw.line(win,(255,255,255),(250,42), (250,158), font_width)
+    elif points == 2:
+        pygame.draw.line(win,(255,255,255), (225,50), (275,50), font_width)
+        pygame.draw.line(win,(255,255,255), (275,50), (275,100), font_width)
+        pygame.draw.line(win,(255,255,255), (275,100), (225,100), font_width)
+        pygame.draw.line(win,(255,255,255), (225,100), (225,150), font_width)
+        pygame.draw.line(win,(255,255,255), (225,150), (275,150), font_width)
+    elif points == 3:
+        pygame.draw.line(win,(255,255,255), (225,50), (275,50), font_width)
+        pygame.draw.line(win,(255,255,255), (275,50), (275,100), font_width)
+        pygame.draw.line(win,(255,255,255), (275,100), (225,100), font_width)
+        pygame.draw.line(win,(255,255,255), (275,100), (275,150), font_width)
+        pygame.draw.line(win,(255,255,255), (225,150), (275,150), font_width)
+    elif points == 4:
+        pygame.draw.line(win,(255,255,255), (225,50), (225,100), font_width)
+        pygame.draw.line(win,(255,255,255), (225,100), (275,100), font_width)
+        pygame.draw.line(win,(255,255,255), (275,50), (275,150), font_width)
+    elif points == 5:
+        pygame.draw.line(win,(255,255,255), (225,50), (275,50), font_width)
+        pygame.draw.line(win,(255,255,255), (225,50), (225,100), font_width)
+        pygame.draw.line(win,(255,255,255), (275,100), (225,100), font_width)
+        pygame.draw.line(win,(255,255,255), (275,100), (275,150), font_width)
+        pygame.draw.line(win,(255,255,255), (225,150), (275,150), font_width)
+    elif points == 6:
+        pygame.draw.line(win,(255,255,255), (225,50), (275,50), font_width)
+        pygame.draw.line(win,(255,255,255), (225,50), (225,100), font_width)
+        pygame.draw.line(win,(255,255,255), (275,100), (225,100), font_width)
+        pygame.draw.line(win,(255,255,255), (275,100), (275,150), font_width)
+        pygame.draw.line(win,(255,255,255), (225,150), (275,150), font_width)
+        pygame.draw.line(win,(255,255,255), (225,100), (225,150), font_width)
+    elif points == 7:
+        pygame.draw.line(win,(255,255,255), (225,50), (275,50), font_width)
+        pygame.draw.line(win,(255,255,255),(275,50), (275,150), font_width)
+    elif points == 8:
+        pygame.draw.line(win,(255,255,255), (225,50), (275,50), font_width)
+        pygame.draw.line(win,(255,255,255), (275,50), (275,100), font_width)
+        pygame.draw.line(win,(255,255,255), (225,50), (225,100), font_width)
+        pygame.draw.line(win,(255,255,255), (275,100), (225,100), font_width)
+        pygame.draw.line(win,(255,255,255), (275,100), (275,150), font_width)
+        pygame.draw.line(win,(255,255,255), (225,150), (275,150), font_width)
+        pygame.draw.line(win,(255,255,255), (225,100), (225,150), font_width)
+    elif points == 9:
+        pygame.draw.line(win,(255,255,255), (225,50), (275,50), font_width)
+        pygame.draw.line(win,(255,255,255), (275,50), (275,100), font_width)
+        pygame.draw.line(win,(255,255,255), (225,50), (225,100), font_width)
+        pygame.draw.line(win,(255,255,255), (275,100), (225,100), font_width)
+        pygame.draw.line(win,(255,255,255), (275,100), (275,150), font_width)
+        pygame.draw.line(win,(255,255,255), (225,150), (275,150), font_width)
+    elif points == 10:
+        pygame.draw.line(win,(255,255,255),(225,42), (225,158), font_width)
+        pygame.draw.polygon(win,(255,255,255), [ (250,50), (250,150), (300,150), (300,50) ], font_width)
+    elif points == 11:
+        pygame.draw.line(win,(255,255,255),(225,42), (225,158), font_width)
+        pygame.draw.line(win,(255,255,255),(275,42), (275,158), font_width)
+    elif points == 12:
+        pygame.draw.line(win,(255,255,255),(225,42), (225,158), font_width)
+        pygame.draw.line(win,(255,255,255), (275,50), (325,50), font_width)
+        pygame.draw.line(win,(255,255,255), (325,50), (325,100), font_width)
+        pygame.draw.line(win,(255,255,255), (325,100), (275,100), font_width)
+        pygame.draw.line(win,(255,255,255), (275,100), (275,150), font_width)
+        pygame.draw.line(win,(255,255,255), (275,150), (325,150), font_width)
+    elif points == 13:
+        pygame.draw.line(win,(255,255,255),(225,42), (225,158), font_width)
+        pygame.draw.line(win,(255,255,255), (275,50), (325,50), font_width)
+        pygame.draw.line(win,(255,255,255), (325,50), (325,100), font_width)
+        pygame.draw.line(win,(255,255,255), (325,100), (275,100), font_width)
+        pygame.draw.line(win,(255,255,255), (325,100), (325,150), font_width)
+        pygame.draw.line(win,(255,255,255), (275,150), (325,150), font_width)
+    elif points == 14:
+        pygame.draw.line(win,(255,255,255),(225,42), (225,158), font_width)
+        pygame.draw.line(win,(255,255,255), (275,42), (275,100), font_width)
+        pygame.draw.line(win,(255,255,255), (275,100), (325,100), font_width)
+        pygame.draw.line(win,(255,255,255), (325,42), (325,158), font_width)
+    elif points == 15:
+        pygame.draw.line(win,(255,255,255),(225,42), (225,158), font_width)
+        pygame.draw.line(win,(255,255,255), (275,50), (325,50), font_width)
+        pygame.draw.line(win,(255,255,255), (275,50), (275,100), font_width)
+        pygame.draw.line(win,(255,255,255), (325,100), (275,100), font_width)
+        pygame.draw.line(win,(255,255,255), (325,100), (325,150), font_width)
+        pygame.draw.line(win,(255,255,255), (275,150), (325,150), font_width)
+    """
+    if not paused:
+        ball_x += ball_directionx*speed
+        ball_y += ball_directiony*speed
+    # Draw pads and ball
+    if pad_1_length/2 > ball_width:
+        paddle_left.draw()
+    if pad_2_length/2 > ball_width:
+        paddle_right.draw()
+    pygame.draw.circle(win,(ball_color), (ball_x,ball_y), ball_width)
+    
+    pygame.display.flip()
+    clock.tick(fps)
+    
+pygame.quit()
