@@ -1,8 +1,17 @@
-- 👋 Hi, I’m @yzguysie
-- 👀 I’m interested in coding games in python
-- 🌱 I’m currently learning how to use all parts of pygame
+- 👋 Hi, I’m @yzguysie (Nathaniel Larimore)
 
-<!---
-yzguysie/yzguysie is a ✨ special ✨ repository because its `README.md` (this file) appears on your GitHub profile.
-You can click the Preview link to take a look at your changes.
---->
+Projects I've Made:
+
+Agarclone - My rendition of Agar.io (Popular internet game):
+<img width="1237" height="697" alt="image" src="https://github.com/user-attachments/assets/ea41c158-7e2f-4909-a1d9-9f583e352d89" />
+
+- Fully fledged multiplayer support
+
+
+Universe Playground - A Sandbox game which Simulates Gravitational forces:
+
+<img width="2559" height="1368" alt="image" src="https://github.com/user-attachments/assets/e9aeca84-5d53-4eff-8fd1-fb9dd397e330" />
+
+- Accurate Gravity simulation
+- Sandbox, play however you wish
+
